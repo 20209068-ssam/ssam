@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>아침 공부 챌린지 | 고등학교 2학년</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fffbe1',
+                            100: '#fff3b8',
+                            500: '#eab308',
+                            600: '#ca8a04',
+                            700: '#a16207',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        @keyframes leaf-fall-1 {
+            0% { transform: translateY(-10vh) rotate(0deg) translateX(0); opacity: 0.7; }
+            50% { transform: translateY(50vh) rotate(180deg) translateX(30px); opacity: 0.8; }
+            100% { transform: translateY(105vh) rotate(360deg) translateX(-20px); opacity: 0.1; }
+        }
+        @keyframes leaf-fall-2 {
+            0% { transform: translateY(-10vh) rotate(45deg) translateX(0); opacity: 0.6; }
+            50% { transform: translateY(55vh) rotate(225deg) translateX(-35px); opacity: 0.7; }
+            100% { transform: translateY(105vh) rotate(405deg) translateX(25px); opacity: 0.1; }
+        }
+        .animate-leaf-1 { animation: leaf-fall-1 14s linear infinite; }
+        .animate-leaf-2 { animation: leaf-fall-2 18s linear infinite 5s; }
+        .animate-leaf-3 { animation: leaf-fall-1 16s linear infinite 9s; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-amber-50/90 via-orange-50/50 to-stone-100 text-slate-800 antialiased min-h-screen flex flex-col justify-between selection:bg-amber-200 relative">
+
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0 opacity-40">
+        <div class="absolute top-0 left-[10%] text-2xl text-amber-600 animate-leaf-1">🍁</div>
+        <div class="absolute top-0 left-[45%] text-xl text-orange-600 animate-leaf-2">🍂</div>
+        <div class="absolute top-0 left-[80%] text-2xl text-red-600 animate-leaf-3">🍁</div>
+    </div>
+
+    <header class="sticky top-0 z-30 bg-amber-50/90 backdrop-blur-md border-b border-amber-200/60 px-4 py-3 shadow-sm">
+        <div class="max-w-md mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <span class="p-2 bg-amber-200/70 text-amber-800 rounded-2xl font-bold text-lg shadow-inner">🍂</span>
+                <div>
+                    <h1 class="font-extrabold text-stone-900 leading-tight flex items-center gap-1">
+                        <span>2학년 가을 아침공부</span>
+                        <span class="text-xs font-bold text-amber-700 bg-amber-200/80 px-2 py-0.5 rounded-full">🍁 Autumn</span>
+                    </h1>
+                    <p class="text-xs text-stone-500 font-medium" id="current-date-str">오늘도 결실을 맺는 아침!</p>
+                </div>
+            </div>
+            
+            <button onclick="openNicknameModal(false)" class="flex items-center space-x-1.5 bg-amber-100/80 hover:bg-amber-200/80 active:bg-amber-300 transition px-3 py-1.5 rounded-full border border-amber-300/60 shadow-sm">
+                <i class="fa-solid fa-user-circle text-amber-600 text-sm"></i>
+                <span id="header-nickname" class="text-xs font-bold text-stone-800">닉네임 설정</span>
+                <span id="header-streak-badge" class="hidden bg-gradient-to-r from-amber-600 to-orange-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm">🔥 0일</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto w-full flex-1 px-4 pt-4 pb-20 relative z-10">
+
+        <!-- Navigation Tabs -->
+        <div class="grid grid-cols-2 gap-1 bg-amber-100/70 p-1 rounded-2xl mb-5 shadow-inner border border-amber-200/50">
+            <button id="tab-btn-my" onclick="switchTab('my')" class="py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center space-x-2 bg-white text-stone-900 shadow-sm">
+                <i class="fa-solid fa-pen-to-square text-amber-600"></i>
+                <span>내 챌린지 기록</span>
+            </button>
+            <button id="tab-btn-feed" onclick="switchTab('feed')" class="py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center space-x-2 text-stone-600 hover:text-stone-900">
+                <i class="fa-solid fa-users text-orange-600"></i>
+                <span>우리 반 피드</span>
+            </button>
+        </div>
+
+        <!-- ================= TAB 1: 내 챌린지 기록 ================= -->
+        <section id="tab-content-my" class="space-y-5">
+            
+            <!-- User Status Card -->
+            <div class="bg-gradient-to-br from-amber-600 via-orange-600 to-red-700 rounded-3xl p-5 text-white shadow-lg shadow-amber-700/20 relative overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-amber-300/20 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="absolute right-3 top-2 text-4xl opacity-15 pointer-events-none">🍁</div>
+                
+                <div class="flex justify-between items-start mb-3 relative z-10">
+                    <div>
+                        <span class="inline-block px-2.5 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-medium text-amber-100 mb-1 border border-white/10">
+                            🌾 가을 아침 결실 모으기
+                        </span>
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                            <span id="card-user-nickname">학생</span> 님
+                        </h2>
+                    </div>
+                    <div class="text-right bg-white/15 backdrop-blur-md px-3 py-1.5 rounded-2xl border border-white/20">
+                        <p class="text-[11px] text-amber-100 font-medium">총 누적 인증</p>
+                        <p class="text-xl font-black text-white" id="card-cumulative-days">0일 성공</p>
+                    </div>
+                </div>
+
+                <!-- Today Verification Status Bar -->
+                <div id="today-status-bar" class="mt-4 bg-black/20 backdrop-blur-sm rounded-2xl p-3 flex items-center justify-between border border-white/10 relative z-10">
+                    <div class="flex items-center space-x-2.5">
+                        <div id="status-icon-bg" class="w-8 h-8 rounded-full bg-amber-400/30 flex items-center justify-center text-amber-200">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-amber-100">오늘의 가을 아침 인증</p>
+                            <p id="status-text" class="text-sm font-bold text-white">아직 인증 전입니다 ✍️</p>
+                        </div>
+                    </div>
+                    <span id="status-badge" class="text-xs px-2.5 py-1 rounded-lg font-bold bg-amber-400 text-amber-950">
+                        미완료
+                    </span>
+                </div>
+            </div>
+
+            <!-- Verification Form -->
+            <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-4">
+                <div class="flex items-center space-x-2 pb-2 border-b border-slate-100">
+                    <div class="w-2 h-5 bg-amber-500 rounded-full"></div>
+                    <h3 class="font-bold text-slate-800 text-base">오늘 아침 인증하기</h3>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                        <i class="fa-solid fa-bullseye text-amber-500 mr-1"></i>오늘 나의 결심
+                    </label>
+                    <input type="text" id="input-resolution" placeholder="예: 수학 모의고사 1회 풀기, 영어 단어 50개 암기"
+                        class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm font-medium transition placeholder:text-slate-400 bg-slate-50/50">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                        <i class="fa-solid fa-camera text-amber-500 mr-1"></i>공부 사진 인증
+                    </label>
+                    
+                    <div class="grid grid-cols-2 gap-2.5 mb-3">
+                        <button type="button" onclick="openCameraModal()"
+                            class="flex items-center justify-center space-x-2 py-3 px-3 bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200 rounded-2xl font-bold text-xs transition active:scale-95 shadow-sm">
+                            <i class="fa-solid fa-camera text-sm"></i>
+                            <span>실시간 카메라</span>
+                        </button>
+
+                        <label class="flex items-center justify-center space-x-2 py-3 px-3 bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200 rounded-2xl font-bold text-xs cursor-pointer transition active:scale-95 shadow-sm">
+                            <i class="fa-solid fa-image text-sm text-slate-500"></i>
+                            <span>갤러리 파일 등록</span>
+                            <input type="file" id="input-file" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+                        </label>
+                    </div>
+
+                    <div id="preview-container" class="hidden relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 group">
+                        <img id="image-preview" src="" alt="인증 사진 미리보기" class="w-full h-48 object-cover">
+                        <button onclick="clearImagePreview()" class="absolute top-2 right-2 bg-black/60 hover:bg-black text-white w-8 h-8 rounded-full flex items-center justify-center text-xs backdrop-blur-sm transition">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button id="btn-submit-verification" onclick="submitVerification()" 
+                    class="w-full py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 active:scale-[0.99] text-white rounded-2xl font-bold text-sm shadow-md shadow-amber-500/25 transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>오늘 아침 인증 제출하기</span>
+                </button>
+            </div>
+
+            <!-- History List -->
+            <div class="space-y-3 pt-2">
+                <div class="flex items-center justify-between px-1">
+                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-clock-rotate-left text-slate-400"></i>
+                        <span>나의 아침 인증 기록</span>
+                    </h3>
+                    <span id="my-history-count" class="text-xs font-semibold text-slate-500">총 0건</span>
+                </div>
+
+                <div id="my-history-list" class="space-y-3"></div>
+            </div>
+
+        </section>
+
+        <!-- ================= TAB 2: 우리 반 피드 ================= -->
+        <section id="tab-content-feed" class="hidden space-y-4">
+            <div class="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <p class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                    <span>우리 반 친구들의 아침 결심 피드</span>
+                </p>
+                <button onclick="refreshFeed()" class="text-xs text-amber-600 hover:text-amber-700 font-semibold flex items-center gap-1">
+                    <i class="fa-solid fa-arrows-rotate text-[11px]"></i>
+                    <span>새로고침</span>
+                </button>
+            </div>
+
+            <div id="class-feed-list" class="space-y-4"></div>
+        </section>
+
+    </main>
+
+    <!-- 1. Nickname Modal -->
+    <div id="modal-nickname" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-opacity duration-300 opacity-0 pointer-events-none">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 transform scale-95 transition-transform duration-300 space-y-5" id="modal-nickname-box">
+            <div class="text-center space-y-2">
+                <div class="w-16 h-16 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto text-3xl font-black shadow-inner">🌅</div>
+                <h3 class="text-lg font-extrabold text-slate-900">반가워요! 닉네임을 입력해 주세요</h3>
+                <p class="text-xs text-slate-500 leading-relaxed">닉네임이나 이름(예: <strong>2반홍길동</strong>)을 입력하시면 누적 공부 일수가 자동 계산됩니다.</p>
+            </div>
+
+            <div class="space-y-3">
+                <input type="text" id="nickname-input-field" placeholder="예: 2반홍길동" oninput="checkNicknameDaysPreview()"
+                    class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500 text-sm font-bold text-center text-slate-800 bg-slate-50">
+
+                <div id="nickname-preview-box" class="bg-amber-50 rounded-2xl p-3 border border-amber-200/60 text-center">
+                    <p class="text-xs text-amber-900">
+                        <span id="preview-nickname-name" class="font-bold">학생</span> 님의 기존 누적 인증:
+                        <span id="preview-days-count" class="font-black text-amber-600 text-sm">0일</span>
+                    </p>
+                </div>
+            </div>
+
+            <button onclick="saveNickname()" class="w-full py-3.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 text-white rounded-2xl font-bold text-sm shadow-md transition">
+                공부 시작하기 🚀
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. Camera Capture Modal -->
+    <div id="modal-camera" class="fixed inset-0 bg-black/95 backdrop-blur-md z-50 flex flex-col justify-between p-4 hidden">
+        <div class="flex justify-between items-center text-white pt-2 px-2">
+            <span class="text-sm font-bold flex items-center gap-2">
+                <i class="fa-solid fa-circle text-red-500 text-xs animate-pulse"></i> 실시간 카메라 인증
+            </span>
+            <button onclick="closeCameraModal()" class="w-9 h-9 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center text-white">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <div class="relative flex-1 my-4 flex items-center justify-center overflow-hidden rounded-3xl bg-slate-900 border border-slate-800">
+            <video id="camera-video" autoplay playsinline class="w-full h-full object-cover"></video>
+            <canvas id="camera-canvas" class="hidden"></canvas>
+            <div class="absolute bottom-4 left-4 bg-black/60 backdrop-blur-md text-white px-3 py-1.5 rounded-xl text-xs font-mono" id="camera-watermark">--:--:--</div>
+        </div>
+
+        <div class="flex items-center justify-around pb-4">
+            <button onclick="switchCameraFacing()" class="w-12 h-12 bg-white/10 text-white rounded-full flex items-center justify-center">
+                <i class="fa-solid fa-rotate text-lg"></i>
+            </button>
+            <button onclick="takeSnapshot()" class="w-20 h-20 rounded-full border-4 border-white flex items-center justify-center p-1 bg-transparent">
+                <div class="w-full h-full bg-white rounded-full"></div>
+            </button>
+            <div class="w-12 h-12"></div>
+        </div>
+    </div>
+
+    <!-- 3. Photo Detail Modal -->
+    <div id="modal-photo-view" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden" onclick="closePhotoModal()">
+        <div class="relative max-w-lg w-full bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-800" onclick="event.stopPropagation()">
+            <img id="modal-photo-img" src="" class="w-full max-h-[70vh] object-contain bg-black">
+            <div class="p-4 bg-slate-900 text-white space-y-1">
+                <div class="flex justify-between items-center">
+                    <span id="modal-photo-nickname" class="font-bold text-amber-400 text-sm">닉네임</span>
+                    <span id="modal-photo-time" class="text-xs text-slate-400">시간</span>
+                </div>
+                <p id="modal-photo-resolution" class="text-sm font-medium text-slate-200">결심 내용</p>
+            </div>
+            <button onclick="closePhotoModal()" class="absolute top-3 right-3 bg-black/60 text-white w-8 h-8 rounded-full flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 4. Teacher GAS Settings & Diagnostic Modal -->
+    <div id="modal-gas-settings" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4 max-h-[90vh] overflow-y-auto">
+            
+            <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+                <h3 class="font-extrabold text-slate-900 text-base flex items-center gap-2">
+                    <i class="fa-solid fa-database text-amber-500"></i> DB 연동 및 진단 설정
+                </h3>
+                <button onclick="closeGasModal()" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Diagnostic Results Alert Box -->
+            <div id="gas-test-result" class="hidden p-3 rounded-2xl text-xs space-y-1 font-medium"></div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Google Apps Script Web App URL</label>
+                <input type="url" id="gas-url-input" placeholder="https://script.google.com/macros/s/AKfycbyOHQKHlGCf9befrxkqmhxOCR8KECievKGQnSroY4Xfdgj7sZLAOBhJxW4V5gNna_FS0g/exec"
+                    class="w-full px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500 text-xs font-mono">
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="testGasConnection()" id="btn-test-gas" class="py-2.5 bg-slate-800 hover:bg-slate-900 text-white rounded-xl font-bold text-xs shadow transition flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-plug-circle-check text-amber-400"></i>
+                    <span>🔍 DB 연결 진단/테스트</span>
+                </button>
+                <button onclick="saveGasUrl()" class="py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow transition">
+                    💾 URL 저장하기
+                </button>
+            </div>
+
+            <!-- Setup Troubleshooting Guide -->
+            <div class="bg-amber-50 p-3.5 rounded-2xl border border-amber-200/80 text-[11px] text-amber-900 space-y-1.5">
+                <p class="font-bold flex items-center gap-1 text-amber-800">
+                    <i class="fa-solid fa-circle-exclamation"></i> DB 연동 안될 때 3초 체크포인트
+                </p>
+                <ol class="list-decimal list-inside space-y-1 text-slate-700 leading-relaxed">
+                    <li>Apps Script 배포 권한이 <strong>'모든 사용자(Anyone)'</strong>로 되어 있나요? (필수)</li>
+                    <li>실행 권한이 <strong>'나(My account)'</strong>로 되어 있나요?</li>
+                    <li>코드 수정 후 [배포 관리] ➔ ✏️ [편집] ➔ <strong>'새 버전'</strong>으로 재배포 하셨나요?</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast-message" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-slate-900/90 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-lg backdrop-blur-sm transition-all duration-300 opacity-0 pointer-events-none flex items-center space-x-2 border border-slate-700">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-amber-400"></i>
+        <span id="toast-text">알림 메시지</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-4 text-center text-[11px] text-slate-400">
+        <p>2학년 아침 공부 챌린지 · Google Apps Script DB 연동</p>
+        <button onclick="openGasModal()" class="mt-1 text-slate-500 underline font-medium hover:text-amber-600">
+            ⚙ 선생님 DB(GAS) 설정 및 진단
+        </button>
+    </footer>
+
+    <script>
+        let currentUser = localStorage.getItem('study_user_nickname') || '';
+        let verifications = JSON.parse(localStorage.getItem('study_verifications') || '[]');
+        let DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbyOHQKHlGCf9befrxkqmhxOCR8KECievKGQnSroY4Xfdgj7sZLAOBhJxW4V5gNna_FS0g/exec';
+        let gasScriptUrl = localStorage.getItem('study_gas_url') || DEFAULT_GAS_URL;
+        let currentCapturedImage = null;
+        let activeTab = 'my';
+        let mediaStream = null;
+        let currentFacingMode = 'user';
+
+        /**
+         * Web Audio API를 활용한 '띵~똥~' 인증 완료 효과음 재생 함수
+         */
+        function playDingDongSound() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const now = ctx.currentTime;
+
+                // 1. '띵' 음 (G5 / 783.99 Hz - 높은 음)
+                const osc1 = ctx.createOscillator();
+                const gain1 = ctx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(783.99, now);
+                gain1.gain.setValueAtTime(0.35, now);
+                gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+                osc1.connect(gain1);
+                gain1.connect(ctx.destination);
+                osc1.start(now);
+                osc1.stop(now + 0.8);
+
+                // 2. '똥' 음 (C5 / 523.25 Hz - 낮은 음)
+                const osc2 = ctx.createOscillator();
+                const gain2 = ctx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(523.25, now + 0.22);
+                gain2.gain.setValueAtTime(0.4, now + 0.22);
+                gain2.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+                osc2.connect(gain2);
+                gain2.connect(ctx.destination);
+                osc2.start(now + 0.22);
+                osc2.stop(now + 1.2);
+            } catch (err) {
+                console.log("Audio Playback Exception:", err);
+            }
+        }
+
+        /**
+         * Web Audio API를 활용한 '박수소리(Applause)' 효과음 재생 함수
+         */
+        function playApplauseSound() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const now = ctx.currentTime;
+                const duration = 2.5;
+
+                // 1. 관중 백그라운드 노이즈 생성
+                const bufferSize = ctx.sampleRate * duration;
+                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+
+                const bgNoise = ctx.createBufferSource();
+                bgNoise.buffer = buffer;
+
+                const bgFilter = ctx.createBiquadFilter();
+                bgFilter.type = 'bandpass';
+                bgFilter.frequency.setValueAtTime(1000, now);
+                bgFilter.Q.setValueAtTime(0.8, now);
+
+                const bgGain = ctx.createGain();
+                bgGain.gain.setValueAtTime(0.12, now);
+                bgGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+                bgNoise.connect(bgFilter);
+                bgFilter.connect(bgGain);
+                bgGain.connect(ctx.destination);
+                bgNoise.start(now);
+
+                // 2. 풍성한 박수 소리를 만드는 35개의 박수 임펄스 튜닝
+                const clapCount = 35;
+                for (let i = 0; i < clapCount; i++) {
+                    const timeOffset = Math.random() * (duration - 0.4);
+                    const clapSource = ctx.createBufferSource();
+                    clapSource.buffer = buffer;
+
+                    const clapFilter = ctx.createBiquadFilter();
+                    clapFilter.type = 'bandpass';
+                    clapFilter.frequency.setValueAtTime(800 + Math.random() * 1200, now + timeOffset);
+                    clapFilter.Q.setValueAtTime(2.5, now + timeOffset);
+
+                    const clapGain = ctx.createGain();
+                    const start = now + timeOffset;
+                    clapGain.gain.setValueAtTime(0, start);
+                    clapGain.gain.linearRampToValueAtTime(0.35 + Math.random() * 0.25, start + 0.005);
+                    clapGain.gain.exponentialRampToValueAtTime(0.001, start + 0.06 + Math.random() * 0.04);
+
+                    clapSource.connect(clapFilter);
+                    clapFilter.connect(clapGain);
+                    clapGain.connect(ctx.destination);
+
+                    clapSource.start(start);
+                    clapSource.stop(start + 0.12);
+                }
+            } catch (err) {
+                console.log("Applause Playback Exception:", err);
+            }
+        }
+
+        window.onload = function() {
+            updateDateDisplay();
+            
+            if (!currentUser) {
+                openNicknameModal(true);
+            } else {
+                updateUserHeader();
+                renderMyHistory();
+            }
+
+            // 기본 설정된 GAS URL 저장 및 즉시 동기화 실행
+            if (!localStorage.getItem('study_gas_url')) {
+                localStorage.setItem('study_gas_url', DEFAULT_GAS_URL);
+            }
+            if (gasScriptUrl) {
+                syncFromGAS();
+            }
+        };
+
+        function showToast(message, iconClass = "fa-circle-check text-amber-400") {
+            const toast = document.getElementById('toast-message');
+            const toastText = document.getElementById('toast-text');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastText.textContent = message;
+            toastIcon.className = `fa-solid ${iconClass}`;
+
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+
+        function updateDateDisplay() {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' };
+            document.getElementById('current-date-str').textContent = now.toLocaleDateString('ko-KR', options);
+        }
+
+        function getTodayString() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function calculateCumulativeDays(nickname) {
+            if (!nickname) return 0;
+            const userPosts = verifications.filter(v => v.nickname && v.nickname.trim() === nickname.trim());
+            const uniqueDates = new Set(userPosts.map(v => v.date));
+            return uniqueDates.size;
+        }
+
+        function checkNicknameDaysPreview() {
+            const inputVal = document.getElementById('nickname-input-field').value.trim();
+            document.getElementById('preview-nickname-name').textContent = inputVal || '학생';
+            const days = calculateCumulativeDays(inputVal);
+            document.getElementById('preview-days-count').textContent = `${days}일`;
+        }
+
+        function openNicknameModal() {
+            const modal = document.getElementById('modal-nickname');
+            const box = document.getElementById('modal-nickname-box');
+            document.getElementById('nickname-input-field').value = currentUser;
+            checkNicknameDaysPreview();
+
+            modal.classList.remove('pointer-events-none', 'opacity-0');
+            modal.classList.add('opacity-100');
+            box.classList.remove('scale-95');
+            box.classList.add('scale-100');
+        }
+
+        function saveNickname() {
+            const inputVal = document.getElementById('nickname-input-field').value.trim();
+            if (!inputVal) {
+                showToast('닉네임을 입력해 주세요!', 'fa-triangle-exclamation text-amber-400');
+                return;
+            }
+
+            currentUser = inputVal;
+            localStorage.setItem('study_user_nickname', currentUser);
+
+            const modal = document.getElementById('modal-nickname');
+            const box = document.getElementById('modal-nickname-box');
+            
+            box.classList.remove('scale-100');
+            box.classList.add('scale-95');
+            modal.classList.remove('opacity-100');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+
+            updateUserHeader();
+            renderMyHistory();
+            if (activeTab === 'feed') renderClassFeed();
+
+            showToast(`'${currentUser}'(으)로 설정되었습니다.`);
+        }
+
+        function updateUserHeader() {
+            document.getElementById('header-nickname').textContent = currentUser;
+            document.getElementById('card-user-nickname').textContent = currentUser;
+
+            const days = calculateCumulativeDays(currentUser);
+            const badge = document.getElementById('header-streak-badge');
+            badge.textContent = `🔥 ${days}일`;
+            badge.classList.remove('hidden');
+
+            document.getElementById('card-cumulative-days').textContent = `${days}일 성공`;
+
+            const todayStr = getTodayString();
+            const todayVerified = verifications.some(v => v.nickname === currentUser && v.date === todayStr);
+
+            const statusText = document.getElementById('status-text');
+            const statusBadge = document.getElementById('status-badge');
+            const statusIcon = document.getElementById('status-icon-bg');
+
+            if (todayVerified) {
+                statusText.textContent = "오늘 아침 인증 완료! 👏";
+                statusBadge.textContent = "인증 완료";
+                statusBadge.className = "text-xs px-2.5 py-1 rounded-lg font-bold bg-emerald-400 text-emerald-950";
+                statusIcon.className = "w-8 h-8 rounded-full bg-emerald-400/30 flex items-center justify-center text-emerald-200";
+            } else {
+                statusText.textContent = "아직 인증 전입니다 ✍️️";
+                statusBadge.textContent = "미완료";
+                statusBadge.className = "text-xs px-2.5 py-1 rounded-lg font-bold bg-amber-400 text-amber-950";
+                statusIcon.className = "w-8 h-8 rounded-full bg-amber-400/30 flex items-center justify-center text-amber-200";
+            }
+        }
+
+        function switchTab(tab) {
+            activeTab = tab;
+            const btnMy = document.getElementById('tab-btn-my');
+            const btnFeed = document.getElementById('tab-btn-feed');
+            const contentMy = document.getElementById('tab-content-my');
+            const contentFeed = document.getElementById('tab-content-feed');
+
+            if (tab === 'my') {
+                btnMy.className = "py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center space-x-2 bg-white text-slate-900 shadow-sm";
+                btnFeed.className = "py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center space-x-2 text-slate-500 hover:text-slate-800";
+                contentMy.classList.remove('hidden');
+                contentFeed.classList.add('hidden');
+            } else {
+                btnFeed.className = "py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center space-x-2 bg-white text-slate-900 shadow-sm";
+                btnMy.className = "py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center space-x-2 text-slate-500 hover:text-slate-800";
+                contentFeed.classList.remove('hidden');
+                contentMy.classList.add('hidden');
+                renderClassFeed();
+            }
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                compressImage(e.target.result, 800, 0.7, (compressedBase64) => {
+                    currentCapturedImage = compressedBase64;
+                    showImagePreview(compressedBase64);
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function compressImage(base64Str, maxWidth, quality, callback) {
+            const img = new Image();
+            img.src = base64Str;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
+
+                if (width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width);
+                    width = maxWidth;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                callback(canvas.toDataURL('image/jpeg', quality));
+            };
+        }
+
+        function showImagePreview(base64Str) {
+            document.getElementById('image-preview').src = base64Str;
+            document.getElementById('preview-container').classList.remove('hidden');
+        }
+
+        function clearImagePreview() {
+            currentCapturedImage = null;
+            document.getElementById('image-preview').src = '';
+            document.getElementById('preview-container').classList.add('hidden');
+            document.getElementById('input-file').value = '';
+        }
+
+        async function openCameraModal() {
+            const modal = document.getElementById('modal-camera');
+            modal.classList.remove('hidden');
+
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: currentFacingMode },
+                    audio: false
+                });
+                const video = document.getElementById('camera-video');
+                video.srcObject = mediaStream;
+
+                const now = new Date();
+                document.getElementById('camera-watermark').textContent = now.toLocaleTimeString('ko-KR');
+            } catch (err) {
+                showToast("카메라 접근 권한이 필요합니다.", "fa-circle-xmark text-red-400");
+                closeCameraModal();
+            }
+        }
+
+        function closeCameraModal() {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
+            }
+            document.getElementById('modal-camera').classList.add('hidden');
+        }
+
+        function switchCameraFacing() {
+            currentFacingMode = (currentFacingMode === 'user') ? 'environment' : 'user';
+            closeCameraModal();
+            openCameraModal();
+        }
+
+        function takeSnapshot() {
+            const video = document.getElementById('camera-video');
+            const canvas = document.getElementById('camera-canvas');
+            const context = canvas.getContext('2d');
+
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const now = new Date();
+            const timeStr = `${getTodayString()} ${now.toLocaleTimeString('ko-KR')}`;
+            context.font = "bold 20px Pretendard, sans-serif";
+            context.fillStyle = "rgba(255, 255, 255, 0.9)";
+            context.shadowColor = "black";
+            context.shadowBlur = 4;
+            context.fillText(`[2학년 아침공부] ${timeStr}`, 20, canvas.height - 25);
+
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+            currentCapturedImage = dataUrl;
+            showImagePreview(dataUrl);
+
+            closeCameraModal();
+            showToast("실시간 촬영 완료!");
+        }
+
+        function submitVerification() {
+            if (!currentUser) {
+                openNicknameModal();
+                return;
+            }
+
+            const resolutionInput = document.getElementById('input-resolution').value.trim();
+            if (!resolutionInput) {
+                showToast('오늘 나의 결심을 작성해 주세요!', 'fa-triangle-exclamation text-amber-400');
+                return;
+            }
+
+            if (!currentCapturedImage) {
+                showToast('공부 인증 사진을 촬영하거나 등록해 주세요!', 'fa-camera text-amber-400');
+                return;
+            }
+
+            const btn = document.getElementById('btn-submit-verification');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i><span>구글 시트 저장 중...</span>`;
+
+            const newRecord = {
+                id: 'post_' + Date.now(),
+                nickname: currentUser,
+                resolution: resolutionInput,
+                imageUrl: currentCapturedImage,
+                date: getTodayString(),
+                timestamp: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }),
+                likes: { '🔥': 0, '👏': 0, '❤️': 0, '💯': 0 }
+            };
+
+            verifications.unshift(newRecord);
+            localStorage.setItem('study_verifications', JSON.stringify(verifications));
+
+            if (gasScriptUrl) {
+                sendToGAS(newRecord);
+            }
+
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i><span>오늘 아침 인증 제출하기</span>`;
+
+                document.getElementById('input-resolution').value = '';
+                clearImagePreview();
+
+                updateUserHeader();
+                renderMyHistory();
+                
+                // 🔔 3번째(또는 3의 배수) 인증 시 박수 소리, 기본 인증 시 띵동 소리 재생
+                const currentDays = calculateCumulativeDays(currentUser);
+                if (currentDays === 3 || currentDays % 3 === 0) {
+                    playApplauseSound();
+                    showToast(`👏 대단해요! 누적 ${currentDays}일 아침 공부 달성! (짝짝짝)`, "fa-hands-clapping text-amber-400");
+                } else {
+                    playDingDongSound();
+                    showToast("아침 공부 인증 완료! 구글 시트 저장 완료 🎉");
+                }
+            }, 600);
+        }
+
+        function renderMyHistory() {
+            const listContainer = document.getElementById('my-history-list');
+            const countBadge = document.getElementById('my-history-count');
+
+            const myPosts = verifications.filter(v => v.nickname === currentUser);
+            countBadge.textContent = `총 ${myPosts.length}건`;
+
+            if (myPosts.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="bg-white rounded-2xl p-6 text-center border border-slate-200 text-slate-400 space-y-2">
+                        <i class="fa-regular fa-folder-open text-3xl text-slate-300"></i>
+                        <p class="text-xs font-medium">아직 등록된 인증 기록이 없습니다.<br>오늘 첫 번째 아침 공부를 인증해 보세요!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listContainer.innerHTML = myPosts.map(post => `
+                <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex items-center justify-between space-x-3">
+                    <div class="flex items-center space-x-3 overflow-hidden">
+                        <img src="${post.imageUrl}" onclick="viewPhoto('${post.imageUrl}', '${escapeHtml(post.nickname)}', '${post.date} ${post.timestamp}', '${escapeHtml(post.resolution)}')"
+                            class="w-14 h-14 rounded-xl object-cover cursor-pointer hover:opacity-90 transition border border-slate-100 flex-shrink-0">
+                        <div class="truncate">
+                            <span class="inline-block px-2 py-0.5 bg-amber-100 text-amber-800 text-[10px] font-bold rounded-md mb-1">
+                                📅 ${post.date} (${post.timestamp || ''})
+                            </span>
+                            <p class="text-xs font-bold text-slate-800 truncate">${escapeHtml(post.resolution)}</p>
+                        </div>
+                    </div>
+                    <span class="text-emerald-600 bg-emerald-50 text-[10px] font-bold px-2.5 py-1 rounded-lg border border-emerald-200 flex-shrink-0">
+                        성공
+                    </span>
+                </div>
+            `).join('');
+        }
+
+        function renderClassFeed() {
+            const feedContainer = document.getElementById('class-feed-list');
+
+            if (verifications.length === 0) {
+                feedContainer.innerHTML = `
+                    <div class="bg-white rounded-3xl p-8 text-center border border-slate-200 text-slate-400 space-y-3">
+                        <i class="fa-solid fa-graduation-cap text-4xl text-slate-300"></i>
+                        <p class="text-sm font-bold text-slate-600">아직 등록된 반 피드가 없습니다</p>
+                        <p class="text-xs text-slate-400">첫 번째로 공부 사진을 찍고 인증글을 올려보세요!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            feedContainer.innerHTML = verifications.map(post => {
+                const userDays = calculateCumulativeDays(post.nickname);
+                const isMyPost = post.nickname === currentUser;
+
+                return `
+                    <div class="bg-white rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden transition hover:shadow-md">
+                        <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                            <div class="flex items-center space-x-2.5">
+                                <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-400 to-amber-500 text-white font-extrabold flex items-center justify-center text-sm shadow-sm">
+                                    ${escapeHtml((post.nickname || '익명').charAt(0))}
+                                </div>
+                                <div>
+                                    <div class="flex items-center space-x-1.5">
+                                        <span class="text-xs font-bold text-slate-800">${escapeHtml(post.nickname || '익명')}</span>
+                                        ${isMyPost ? '<span class="text-[9px] bg-amber-100 text-amber-800 font-bold px-1.5 py-0.2 rounded">나</span>' : ''}
+                                    </div>
+                                    <span class="text-[10px] text-amber-600 font-semibold">🔥 누적 ${userDays}일째 공부 중</span>
+                                </div>
+                            </div>
+                            <span class="text-[11px] font-medium text-slate-400">${post.date} ${post.timestamp || ''}</span>
+                        </div>
+
+                        <div class="px-4 py-2.5 bg-amber-50/60 border-b border-amber-100/50">
+                            <p class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                                <i class="fa-solid fa-quote-left text-amber-400 text-xs"></i>
+                                <span>${escapeHtml(post.resolution)}</span>
+                            </p>
+                        </div>
+
+                        <div class="relative bg-slate-900 group cursor-pointer" onclick="viewPhoto('${post.imageUrl}', '${escapeHtml(post.nickname)}', '${post.date} ${post.timestamp}', '${escapeHtml(post.resolution)}')">
+                            <img src="${post.imageUrl}" class="w-full max-h-80 object-cover group-hover:opacity-95 transition">
+                        </div>
+
+                        <div class="p-3 bg-white flex items-center justify-around border-t border-slate-100 text-xs">
+                            ${renderReactionButton(post.id, '🔥', post.likes ? post.likes['🔥'] || 0 : 0)}
+                            ${renderReactionButton(post.id, '👏', post.likes ? post.likes['👏'] || 0 : 0)}
+                            ${renderReactionButton(post.id, '❤️', post.likes ? post.likes['❤️'] || 0 : 0)}
+                            ${renderReactionButton(post.id, '💯', post.likes ? post.likes['💯'] || 0 : 0)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderReactionButton(postId, emoji, count) {
+            return `
+                <button onclick="addReaction('${postId}', '${emoji}')" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full hover:bg-slate-100 active:scale-95 transition border border-slate-100">
+                    <span>${emoji}</span>
+                    <span class="font-bold text-slate-600 text-xs">${count}</span>
+                </button>
+            `;
+        }
+
+        function addReaction(postId, emoji) {
+            const post = verifications.find(v => v.id === postId);
+            if (!post) return;
+
+            if (!post.likes) post.likes = { '🔥': 0, '👏': 0, '❤️': 0, '💯': 0 };
+            post.likes[emoji] = (post.likes[emoji] || 0) + 1;
+
+            localStorage.setItem('study_verifications', JSON.stringify(verifications));
+            renderClassFeed();
+            if (gasScriptUrl) sendToGAS(post);
+            showToast(`${emoji} 응원을 보냈습니다!`);
+        }
+
+        function refreshFeed() {
+            if (gasScriptUrl) {
+                syncFromGAS();
+            } else {
+                renderClassFeed();
+                showToast("피드가 새로고침 되었습니다.");
+            }
+        }
+
+        function viewPhoto(imgUrl, nickname, time, resolution) {
+            document.getElementById('modal-photo-img').src = imgUrl;
+            document.getElementById('modal-photo-nickname').textContent = nickname;
+            document.getElementById('modal-photo-time').textContent = time;
+            document.getElementById('modal-photo-resolution').textContent = resolution;
+            document.getElementById('modal-photo-view').classList.remove('hidden');
+        }
+
+        function closePhotoModal() {
+            document.getElementById('modal-photo-view').classList.add('hidden');
+        }
+
+        function openGasModal() {
+            document.getElementById('gas-url-input').value = gasScriptUrl;
+            document.getElementById('modal-gas-settings').classList.remove('hidden');
+        }
+
+        function closeGasModal() {
+            document.getElementById('modal-gas-settings').classList.add('hidden');
+        }
+
+        function saveGasUrl() {
+            const url = document.getElementById('gas-url-input').value.trim();
+            
+            if (url && !url.startsWith('https://script.google.com/macros/s/')) {
+                showToast("올바른 Google Apps Script 웹 앱 URL이 아닙니다.", "fa-triangle-exclamation text-amber-400");
+                return;
+            }
+
+            gasScriptUrl = url;
+            localStorage.setItem('study_gas_url', gasScriptUrl);
+            showToast("GAS Web App URL 저장 완료!");
+            if (gasScriptUrl) syncFromGAS();
+        }
+
+        function sendToGAS(record) {
+            if (!gasScriptUrl) return;
+
+            // Use text/plain header to bypass CORS preflight OPTIONS in GAS
+            fetch(gasScriptUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(record)
+            }).catch(err => console.warn("GAS POST warning:", err));
+        }
+
+        function syncFromGAS() {
+            if (!gasScriptUrl) return;
+
+            fetch(gasScriptUrl, { method: 'GET', redirect: 'follow' })
+                .then(res => res.text())
+                .then(rawText => {
+                    // Check if redirecting to Google Login page due to bad permissions
+                    if (rawText.trim().startsWith('<')) {
+                        throw new Error("GAS_LOGIN_REQUIRED");
+                    }
+                    const data = JSON.parse(rawText);
+                    if (Array.isArray(data)) {
+                        verifications = data;
+                        localStorage.setItem('study_verifications', JSON.stringify(verifications));
+                        updateUserHeader();
+                        renderMyHistory();
+                        if (activeTab === 'feed') renderClassFeed();
+                        showToast("구글 시트 실시간 동기화 완료!");
+                    }
+                })
+                .catch(err => {
+                    console.error("GAS Sync Error:", err);
+                    if (err.message === "GAS_LOGIN_REQUIRED") {
+                        showToast("구글 배포 권한을 '모든 사용자(Anyone)'로 변경해 주세요!", "fa-triangle-exclamation text-red-400");
+                    } else {
+                        showToast("시트 동기화 실패: GAS URL 및 배포 설정을 확인해 주세요.", "fa-triangle-exclamation text-amber-400");
+                    }
+                });
+        }
+
+        // Diagnostic tool to test connection instantly
+        function testGasConnection() {
+            const url = document.getElementById('gas-url-input').value.trim();
+            const resultBox = document.getElementById('gas-test-result');
+            const btn = document.getElementById('btn-test-gas');
+
+            if (!url) {
+                resultBox.className = "p-3 rounded-2xl bg-red-50 text-red-800 border border-red-200 text-xs block";
+                resultBox.innerHTML = "❌ URL을 입력한 후 진단해 주세요.";
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> 진단 중...`;
+            resultBox.className = "p-3 rounded-2xl bg-slate-100 text-slate-800 border border-slate-200 text-xs block";
+            resultBox.innerHTML = "⏳ DB 연결 상태 확인 중...";
+
+            const testUrl = url + (url.includes('?') ? '&' : '?') + 'action=ping';
+
+            fetch(testUrl, { method: 'GET', redirect: 'follow' })
+                .then(res => res.text())
+                .then(rawText => {
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-plug-circle-check text-amber-400"></i> <span>🔍 DB 연결 진단/테스트</span>`;
+
+                    if (rawText.trim().startsWith('<')) {
+                        resultBox.className = "p-3 rounded-2xl bg-red-50 text-red-900 border border-red-300 text-xs block leading-relaxed";
+                        resultBox.innerHTML = `
+                            <strong>❌ 연동 실패 (액세스 권한 오류)</strong><br>
+                            Google 로그인 페이지로 거부되었습니다.<br>
+                            👉 <strong>해결책:</strong> Apps Script 편집기에서 [배포] ➔ [배포 관리] ➔ ✏️ [편집]을 누르고 <strong>'액세스 권한이 있는 사용자'</strong>를 반드시 <strong>'모든 사용자 (Anyone)'</strong>로 선택하세요!
+                        `;
+                    } else {
+                        try {
+                            const json = JSON.parse(rawText);
+                            resultBox.className = "p-3 rounded-2xl bg-emerald-50 text-emerald-900 border border-emerald-300 text-xs block leading-relaxed";
+                            resultBox.innerHTML = `
+                                <strong>✅ 연동 성공!</strong> (구글 시트 데이터 ${json.rowCount || 0}건 확인됨)<br>
+                                실시간 DB 읽기/쓰기가 정상 작동합니다.
+                            `;
+                            gasScriptUrl = url;
+                            localStorage.setItem('study_gas_url', gasScriptUrl);
+                        } catch (e) {
+                            resultBox.className = "p-3 rounded-2xl bg-amber-50 text-amber-900 border border-amber-300 text-xs block";
+                            resultBox.innerHTML = "⚠️ 응답을 받았으나 JSON 포맷이 아닙니다. 스크립트 코드(Code.gs)를 확인해 주세요.";
+                        }
+                    }
+                })
+                .catch(err => {
+                    btn.disabled = false;
+                    btn.innerHTML = `<i class="fa-solid fa-plug-circle-check text-amber-400"></i> <span>🔍 DB 연결 진단/테스트</span>`;
+                    resultBox.className = "p-3 rounded-2xl bg-red-50 text-red-900 border border-red-300 text-xs block leading-relaxed";
+                    resultBox.innerHTML = `
+                        <strong>❌ 네트워크 요청 실패</strong><br>
+                        URL이 올바르지 않거나 배포가 되지 않았습니다.<br>
+                        👉 URL 끝이 <strong>/exec</strong>로 끝나는지 확인해 주세요.
+                    `;
+                });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
